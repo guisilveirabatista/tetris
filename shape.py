@@ -19,13 +19,16 @@ class Shape:
         self.color = color
         self.orientation = "UP"
         self.moving = 1
-        self.rectangles = []
+        self.rectangles = [
+                    pygame.Rect(self.x, self.y, self.square_width, self.square_height),
+                    pygame.Rect(self.x, self.y + self.square_height, self.square_width * 3, self.square_height)
+        ]
         
 
     def move(self, dx, dy):
         self.x += dx * self.speed
         
-    def spin(self, screen):
+    def spin(self):
         if self.orientation == "UP":
             self.orientation = "RIGHT"
         elif self.orientation == "RIGHT":
@@ -34,6 +37,7 @@ class Shape:
             self.orientation = "LEFT"
         elif self.orientation == "LEFT":
             self.orientation = "UP"
+        self.rectangles.clear()
         match self.shape:
             case "L":
                 match self.orientation:
@@ -61,16 +65,8 @@ class Shape:
     def draw(self, screen):
         match self.shape:
             case "L":
-                if not self.rectangles:
-                    pygame.draw.rect(screen, RED, pygame.Rect(self.x, self.y, self.square_width, self.square_height)),
-                    pygame.draw.rect(screen, RED, pygame.Rect(self.x, self.y + self.square_height, self.square_width * 3, self.square_height))
-                else:
-                    for rect in self.rectangles:
-                        pygame.draw.rect(screen, RED, rect)            
-                    # self.rectangles = [
-                    #     pygame.draw.rect(screen, RED, pygame.Rect(self.x, self.y, self.square_width, self.square_height)),
-                    #     pygame.draw.rect(screen, RED, pygame.Rect(self.x, self.y + self.square_height, self.square_width * 3, self.square_height))
-                    # ]
+                for rect in self.rectangles:
+                    pygame.draw.rect(screen, RED, rect)            
             case "T":
                 self.rectangles = [
                     pygame.draw.rect(screen, BLUE, pygame.Rect(self.x + self.square_width, self.y, self.square_width, self.square_height)),

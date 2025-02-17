@@ -50,6 +50,12 @@ def check_collision(block, still_blocks):
                     return 0
     return 1
 
+def check_touch_floor(block):
+    for rect in block.rectangles:
+        if rect.y + rect.height == HEIGHT:
+            return True
+    return False
+
 def are_rects_touching(rect1, rect2):
     if rect1.top == rect2.bottom and (rect1.right > rect2.left and rect1.left < rect2.right):
         return True
@@ -77,17 +83,18 @@ while running:
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     for block in moving_blocks:
-                        block.spin(screen)
+                        block.spin()
             elif event.type == UPDATE_EVENT:
                 for block in moving_blocks:
-                    if block.y + (block.square_height * 2) == HEIGHT or check_collision(block, still_blocks) == 0:
+                    if check_touch_floor(block) or check_collision(block, still_blocks) == 0:
                         block.moving = 0
                         still_blocks.append(block)
                         moving_blocks.remove(block)
                         moving_blocks.append(Shape(shapes[random_shape()], random_start_position(), 0, SQUARE_WIDTH, SQUARE_HEIGTH, RED))
                     elif block.moving == 1:
-                        block.y = block.y + SQUARE_HEIGTH
-                    block.draw(screen)
+                        for rect in block.rectangles:
+                            rect.y = rect.y + SQUARE_HEIGTH
+                        block.draw(screen)
                 for block in still_blocks:
                     block.draw(screen)
                 pygame.display.flip()
